@@ -1,0 +1,3 @@
+[submodule "src/third_party/chess-library"]
+	path = src/third_party/chess-library
+	url = https://github.com/Disservin/chess-library
