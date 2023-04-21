@@ -173,7 +173,7 @@ bool Generation::playNextMove(UciEngine &engine, Chess::Board &board,
     return true;
 }
 
-bool Generation::shouldRecord(UciEngine &engine, bool inCheck, bool isCapture, int ply,
+bool Generation::shouldRecord(const UciEngine &engine, bool inCheck, bool isCapture, int ply,
                               std::string_view score_type, int score) {
     if (inCheck) {
         return false;
