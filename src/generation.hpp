@@ -36,9 +36,9 @@ class Generation {
 
     void updateCounts(const std::string &score_type, int score);
 
-    static bool shouldRecord(UciEngine &engine, bool inCheck, bool isCapture, int ply,
+    static bool shouldRecord(const UciEngine &engine, bool inCheck, bool isCapture, int ply,
                              std::string_view score_type, int score);
-    std::pair<bool, Chess::Color> shouldAdjudicate(Chess::Board &board, int score) const;
+    std::pair<bool, Chess::Color> shouldAdjudicate(const Chess::Board &board, int score) const;
 
     bool playNextMove(UciEngine &engine, Chess::Board &board,
                       std::vector<std::string> &played_moves, Chess::Color &winning_color);

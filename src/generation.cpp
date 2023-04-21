@@ -211,7 +211,8 @@ void Generation::updateCounts(const std::string &score_type, int score) {
     }
 }
 
-std::pair<bool, Chess::Color> Generation::shouldAdjudicate(Chess::Board &board, int score) const {
+std::pair<bool, Chess::Color> Generation::shouldAdjudicate(const Chess::Board &board,
+                                                           int score) const {
     if (win_count_ >= 4) {
         auto win = score > 0 ? board.sideToMove() : ~board.sideToMove();
         return {true, win};
