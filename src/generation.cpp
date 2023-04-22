@@ -124,10 +124,8 @@ void Generation::randomPlayout(std::ofstream &file, UciEngine &engine1, UciEngin
 bool Generation::playNextMove(UciEngine &engine, Chess::Board &board,
                               std::vector<std::string> &played_moves_,
                               Chess::Color &winning_color) {
-    const bool inCheck =
-        board.isSquareAttacked(board.kingSq(board.sideToMove()), ~board.sideToMove());
-
-    auto gameover = board.isGameOver();
+    const bool inCheck = board.isKingAttacked();
+    const auto gameover = board.isGameOver();
 
     if (gameover == Chess::GameResult::DRAW) {
         winning_color = Chess::Color::NO_COLOR;
