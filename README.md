@@ -25,8 +25,13 @@ Pros:
 - You dont have to do anything other than plugging your engine into this and recompiling.
 - Cross OS support.
 - epd book support
+- Multithreaded
 
 Cons:
 
 - A builtin data generator into your engine is in my experience faster, unless I have a bottleneck
   somewhere in my code, please tell me if thats the case.
+
+## Notes
+
+If you specify 30 threads to use, it will spawn 30 engine1's and 30 engine2's, and they will take turns when playing.
