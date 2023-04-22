@@ -146,9 +146,9 @@ bool Generation::playNextMove(UciEngine &engine, Chess::Board &board,
     const auto score = engine.lastScore();
     const auto move = board.uciToMove(bestMove);
 
-    updateCounts(score_type, score);
+    updateAdjudication(score_type, score);
 
-    auto adjudication = shouldAdjudicate(board, score);
+    auto adjudication = adjudicate(board, score);
 
     if (adjudication.first) {
         winning_color = adjudication.second;
@@ -157,7 +157,7 @@ bool Generation::playNextMove(UciEngine &engine, Chess::Board &board,
 
     const bool isCapture = board.pieceAt(move.to()) != Chess::Piece::NONE;
 
-    auto add = shouldRecord(engine, inCheck, isCapture, kRandomMoves, score_type, score);
+    auto add = record(engine, inCheck, isCapture, kRandomMoves, score_type, score);
 
     if (add) {
         data_.emplace_back(board.getFen(),
@@ -171,8 +171,8 @@ bool Generation::playNextMove(UciEngine &engine, Chess::Board &board,
     return true;
 }
 
-bool Generation::shouldRecord(const UciEngine &engine, bool inCheck, bool isCapture, int ply,
-                              std::string_view score_type, int score) {
+bool Generation::record(const UciEngine &engine, bool inCheck, bool isCapture, int ply,
+                        std::string_view score_type, int score) {
     if (inCheck) {
         return false;
     }
@@ -196,7 +196,7 @@ bool Generation::shouldRecord(const UciEngine &engine, bool inCheck, bool isCapt
     return true;
 }
 
-void Generation::updateCounts(const std::string &score_type, int score) {
+void Generation::updateAdjudication(const std::string &score_type, int score) {
     if (std::abs(score) > 1500 || score_type == "mate") {
         win_count_++;
         draw_count_ = 0;
@@ -209,8 +209,7 @@ void Generation::updateCounts(const std::string &score_type, int score) {
     }
 }
 
-std::pair<bool, Chess::Color> Generation::shouldAdjudicate(const Chess::Board &board,
-                                                           int score) const {
+std::pair<bool, Chess::Color> Generation::adjudicate(const Chess::Board &board, int score) const {
     if (win_count_ >= 4) {
         auto win = score > 0 ? board.sideToMove() : ~board.sideToMove();
         return {true, win};
@@ -229,14 +228,15 @@ void Generation::start(std::pair<EngineConfig, EngineConfig> engines, const std:
     engine1.loadConfig(engines.first);
     engine2.loadConfig(engines.second);
 
+    init(engine1, engine2, file_path);
+
     std::ofstream file;
     file.open("data/data" + std::to_string(thread_id) + ".txt", std::ios::app);
 
-    init(engine1, engine2, file_path);
+    uint64_t games = 0;
 
     auto t0 = std::chrono::high_resolution_clock::now();
 
-    uint64_t games = 0;
     while (!pool.getStop()) {
         games++;
         randomPlayout(file, engine1, engine2);
